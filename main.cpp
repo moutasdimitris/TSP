@@ -1,10 +1,14 @@
 #include <iostream>
 #include <chrono>
-#include <iostream>
 #include <fstream>
 #include <cmath>
 #include <vector>
 #include <algorithm>
+#define BOLDRED     "\033[1m\033[31m"      /* Bold Red */
+#define RESET   "\033[0m"
+#define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
+#define BOLDYELLOW  "\033[1m\033[33m"      /* Bold Yellow */
+#define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 
 std::vector<int> path;
 
@@ -53,7 +57,7 @@ int getLastV() {
 }
 
 void algNo1(const std::vector<std::vector<int> >& vector){
-    std::cout<<"Starting algorithm No1 (Naive Solution).."<<std::endl;
+    std::cout<<BOLDWHITE<<"Starting algorithm No1 (Naive Solution).."<<std::endl;
     auto start = std::chrono::high_resolution_clock::now();
     int totalCost = 0,last = 0;
     totalCost+=findMin(vector[0],1);
@@ -62,30 +66,50 @@ void algNo1(const std::vector<std::vector<int> >& vector){
        if (last!=1)
          totalCost+=findMin1(vector[last-1]);
     }while(last!=1);
-    std::cout<<"Route is: ";
+    std::cout<<BOLDWHITE<<"Route is: ";
     for (int a:path)
-        std::cout<<a<<" ";
+        std::cout<<BOLDGREEN<<a<<" ";
     std::cout<<std::endl;
-    std::cout<<"Total cost is = "<<totalCost<<std::endl;
+    std::cout<<BOLDWHITE<<"Total cost = "<<BOLDGREEN<<totalCost<<std::endl;
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout<<"Execution time:"<<duration.count()<<"ms"<<std::endl;
+    std::cout<<BOLDWHITE<<"Execution time:"<<BOLDGREEN<<duration.count()<<"ms"<<std::endl;
 
 }
+int calc(const std::vector<std::vector<int>> cities, int pos, int visited, std::vector<std::vector<int>> state) {
+    if(visited == ((1 << cities.size()) - 1))
+        return cities[pos][0]; // return to starting city
 
+    if(state[pos][visited] != INT_MAX)
+        return state[pos][visited];
 
-//Check if element str exists in ver vector.
+    for(int i = 0; i < cities.size(); ++i)
+    {
+        // can't visit ourselves unless we're ending & skip if already visited
+        if(i == pos || (visited & (1 << i)))
+            continue;
+
+        int distance = cities[pos][i] + calc(cities, i, visited | (1 << i), state);
+        if(distance < state[pos][visited])
+            state[pos][visited] = distance;
+    }
+
+    return state[pos][visited];
+}
 
 void algNo2(const std::vector<std::vector<int> >& vector){
-    std::cout<<"Starting algorithm No2.."<<std::endl;
+    std::cout<<BOLDWHITE<<"Starting algorithm No2.."<<std::endl;
     auto start = std::chrono::high_resolution_clock::now();
-
+    std::vector<std::vector<int>> vec(vector.size());
+    for(auto& neighbors : vec)
+        neighbors = std::vector<int>((1 << vector.size()) - 1, INT_MAX);
+    std::cout <<BOLDWHITE<< "Total cost = "<<BOLDGREEN << calc(vector, 0, 1, vec)<< std::endl;
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout<<"Execution time:"<<duration.count()<<"ms"<<std::endl;
+    std::cout<<BOLDWHITE<<"Execution time = "<<BOLDGREEN<<duration.count()<<"ms"<<std::endl;
 }
 
-void algNo3(std::vector<std::vector<int> > vector){
+void algNo3(const std::vector<std::vector<int> >& vector){
     std::cout<<"Starting algorithm No3.."<<std::endl;
     auto start = std::chrono::high_resolution_clock::now();
 
@@ -95,12 +119,12 @@ void algNo3(std::vector<std::vector<int> > vector){
 
 }
 
-void readFile(std::string path,int choice){
+void readFile(std::string filePath, int choice){
     int n=0;
     std::vector<int> vec,temp;
     std::vector<std::vector<int> > vector;
     std::string line;
-    std::ifstream myfile (path);
+    std::ifstream myfile (filePath);
     if (myfile.is_open())
     {
         while (getline(myfile,line))
@@ -143,10 +167,10 @@ int main(int argc, char *argv[] ) {
     int choice;
     std::string file="/Users/root1/CLionProjects/TSP/graph.txt";
     bool validChoice=false;
-    std::cout<<"Please select an algorithm:"<<std::endl;
-    std::cout<<"1)Algorithm No1"<<std::endl;
-    std::cout<<"2)Algorithm No2"<<std::endl;
-    std::cout<<"3)Algorithm No3"<<std::endl;
+    std::cout<<BOLDGREEN<<"Please select an algorithm:"<<std::endl;
+    std::cout<<BOLDYELLOW<<"1)Algorithm No1(Naive Solution)"<<std::endl;
+    std::cout<<"2)Algorithm No2(Dynamic Programming)"<<std::endl;
+    std::cout<<"3)Algorithm No3"<<RESET<<std::endl;
     std::cout<<">";
     std::cin>>choice;
     std::cout << std::endl;
@@ -155,10 +179,10 @@ int main(int argc, char *argv[] ) {
         validChoice=true;
         readFile(file,choice);
     }else{
-        std::cout<<"Please enter valid num"<<std::endl;
-        std::cout<<"1)Algorithm No1"<<std::endl;
-        std::cout<<"2)Algorithm No2"<<std::endl;
-        std::cout<<"3)Algorithm No3"<<std::endl;
+        std::cout<<BOLDRED<<"Please enter valid num"<<RESET<<std::endl;
+        std::cout<<BOLDYELLOW<<"1)Algorithm No1(Naive Solution)"<<std::endl;
+        std::cout<<"2)Algorithm No2(Dynamic Programming)"<<std::endl;
+        std::cout<<"3)Algorithm No3"<<RESET<<std::endl;
         std::cout<<">";
         std::cin>>choice;
     }}while(!validChoice);
