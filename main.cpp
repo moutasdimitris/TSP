@@ -10,7 +10,11 @@
 #define BOLDYELLOW  "\033[1m\033[33m"      /* Bold Yellow */
 #define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 
+
 std::vector<int> path;
+std::vector<int> path1;
+
+
 
 bool checkIfExists(int str){
     for (int i:path){
@@ -100,9 +104,10 @@ int calc(const std::vector<std::vector<int>> cities, int pos, int visited, std::
 void algNo2(const std::vector<std::vector<int> >& vector){
     std::cout<<BOLDWHITE<<"Starting algorithm No2.."<<std::endl;
     auto start = std::chrono::high_resolution_clock::now();
-    std::vector<std::vector<int>> vec(vector.size());
-    for(auto& neighbors : vec)
-        neighbors = std::vector<int>((1 << vector.size()) - 1, INT_MAX);
+    std::vector<std::vector<int> > vec(vector.size());
+    for(auto& neighbors : vec) {
+        neighbors = std::vector<int>((1 << vector.size()) - 1,INT_MAX);
+    }
     std::cout <<BOLDWHITE<< "Total cost = "<<BOLDGREEN << calc(vector, 0, 1, vec)<< std::endl;
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
