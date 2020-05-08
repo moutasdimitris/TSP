@@ -4,15 +4,18 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
-#define BOLDRED     "\033[1m\033[31m"      /* Bold Red */
-#define RESET   "\033[0m"
-#define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
+#include <set>
+
+#define BOLDRED     "\033[1m\033[31m"      /* Bold Red    */
+#define RESET       "\033[0m"              /* Reset       */
+#define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green  */
 #define BOLDYELLOW  "\033[1m\033[33m"      /* Bold Yellow */
-#define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
+#define BOLDWHITE   "\033[1m\033[37m"      /* Bold White  */
 
 
 std::vector<int> path;
 std::vector<int> path1;
+std::vector<std::vector<int> > perm;
 
 
 
@@ -80,35 +83,66 @@ void algNo1(const std::vector<std::vector<int> >& vector){
     std::cout<<BOLDWHITE<<"Execution time:"<<BOLDGREEN<<duration.count()<<"ms"<<std::endl;
 
 }
-int calc(const std::vector<std::vector<int>> cities, int pos, int visited, std::vector<std::vector<int>> state) {
-    if(visited == ((1 << cities.size()) - 1))
-        return cities[pos][0]; // return to starting city
 
-    if(state[pos][visited] != INT_MAX)
-        return state[pos][visited];
+int findMin2(std::vector<std::vector<int> > vector,std::vector<int> p){
+    int sum=0;
+    for (int i=0;i<p.size()-1;i++){
+        int first=p[i];
+        int second=p[i+1];
+        sum+=vector[first-1][second-1];
+    }
+    return sum;
+}
 
-    for(int i = 0; i < cities.size(); ++i)
-    {
-        // can't visit ourselves unless we're ending & skip if already visited
-        if(i == pos || (visited & (1 << i)))
-            continue;
+int findMinPos(std::vector<int> v,int num){
+    std::vector<int>::iterator indx=lower_bound(v.begin(),v.end(), num);
+    int pos=indx-v.begin();
+    if (!(indx == v.end() || *indx!=num))
+        return pos+1;
+    return -1;
+}
 
-        int distance = cities[pos][i] + calc(cities, i, visited | (1 << i), state);
-        if(distance < state[pos][visited])
-            state[pos][visited] = distance;
+int calc(const std::vector<std::vector<int> >& vector){
+    std::vector<int> costs;
+    for (std::vector<int> vec:perm){
+        costs.push_back(findMin2(vector,vec));
     }
 
-    return state[pos][visited];
+    std::sort(costs.begin(),costs.end());
+    int pos=findMinPos(costs,costs[0]);
+    path1=perm[pos];
+    return costs[0];
+}
+
+void findPermutations(int n){
+    std::vector<int> a;
+    for (int i=0;i<n;i++){
+        if (i!=0)
+          a.push_back(i+1);
+    }
+    std::vector<std::vector<int> > p;
+    do {
+        p.push_back(a);
+    } while (std::next_permutation(a.begin(), a.end()));
+
+    for (std::vector<int> d:p){
+        d.insert(d.begin(),1);
+        d.push_back(1);
+        perm.push_back(d);
+    }
+    p.clear();
 }
 
 void algNo2(const std::vector<std::vector<int> >& vector){
     std::cout<<BOLDWHITE<<"Starting algorithm No2.."<<std::endl;
     auto start = std::chrono::high_resolution_clock::now();
-    std::vector<std::vector<int> > vec(vector.size());
-    for(auto& neighbors : vec) {
-        neighbors = std::vector<int>((1 << vector.size()) - 1,INT_MAX);
-    }
-    std::cout <<BOLDWHITE<< "Total cost = "<<BOLDGREEN << calc(vector, 0, 1, vec)<< std::endl;
+    findPermutations(vector.size());
+    int totalCost=calc(vector);
+    std::cout<<BOLDWHITE<<"Route is: ";
+    for (int a:path1)
+        std::cout<<BOLDGREEN<<a<<" ";
+    std::cout<<std::endl;
+    std::cout <<BOLDWHITE<< "Total cost = "<<BOLDGREEN <<totalCost<< std::endl;
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     std::cout<<BOLDWHITE<<"Execution time = "<<BOLDGREEN<<duration.count()<<"ms"<<std::endl;
