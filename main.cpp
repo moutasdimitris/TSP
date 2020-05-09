@@ -304,7 +304,7 @@ void calc2(std::vector<std::vector<int> > vector){
  * @param vector
  */
 void algNo3(const std::vector<std::vector<int> >& vector){
-    std::cout<<"Starting algorithm No3.."<<std::endl;
+    std::cout<<BOLDWHITE<<"Starting algorithm No3.."<<std::endl;
     auto start = std::chrono::high_resolution_clock::now();
     findPermutations(vector.size());
     calc2(vector);
