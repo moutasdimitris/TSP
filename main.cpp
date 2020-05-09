@@ -69,7 +69,7 @@ int findMin(std::vector<int> vec,int p){
  *  Όπως και στην μέθοδο findMin υπολογίζει
  *  και επιστρέφει το min με τη διαφορά ότι
  *  τσεκάρει εάν υπάρχει το αντίστροφο ζεύγος
- *  πχ. εάν έχουμε ήδη επισκεπτεί το ζεύγος
+ *  πχ. εάν έχουμε ήδη επισκεφτεί το ζεύγος
  *  1-2 με την checkIfexists δεν μπορούμε να
  *  χρησιμοποιήσουμε το ζεύγος 2-1. Και πάλι
  *  βάζουμε τα κατάλληλα στοιχεία στο vector
@@ -116,7 +116,7 @@ int getLastV() {
  * @param vector
  */
 void algNo1(const std::vector<std::vector<int> >& vector){
-    std::cout<<BOLDWHITE<<"Starting algorithm No1 (Naive Solution).."<<std::endl;
+    std::cout<<BOLDWHITE<<"Starting algorithm No1.."<<std::endl;
     auto start = std::chrono::high_resolution_clock::now();
     int totalCost = 0,last = 0;
     totalCost+=findMin(vector[0],1);
