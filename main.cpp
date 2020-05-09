@@ -15,7 +15,9 @@
 
 std::vector<int> path;
 std::vector<int> path1;
+std::vector<std::vector<int> > path2;
 std::vector<std::vector<int> > perm;
+int totalMin=0;
 
 
 
@@ -148,10 +150,48 @@ void algNo2(const std::vector<std::vector<int> >& vector){
     std::cout<<BOLDWHITE<<"Execution time = "<<BOLDGREEN<<duration.count()<<"ms"<<std::endl;
 }
 
+void calc2first(std::vector<std::vector<int> > vector){
+    totalMin=findMin2(vector,perm[0]);
+    path2.push_back(perm[0]);
+}
+
+void findMin3(std::vector<std::vector<int> > vector,std::vector<int> p){
+    int sum=0;
+    int pos=0;
+    for (int i=0;i<p.size()-1;i++){
+        pos=i;
+        int first=p[i];
+        int second=p[i+1];
+        sum+=vector[first-1][second-1];
+        if (sum>=totalMin){
+            return;
+        }
+    }
+
+    path2.clear();
+    path2.push_back(p);
+    totalMin=sum;
+}
+
+void calc2(std::vector<std::vector<int> > vector){
+    calc2first(vector);
+    for (int i=1;i<perm.size();i++) {
+        findMin3(vector,perm[i]);
+    }
+}
+
 void algNo3(const std::vector<std::vector<int> >& vector){
     std::cout<<"Starting algorithm No3.."<<std::endl;
     auto start = std::chrono::high_resolution_clock::now();
-
+    findPermutations(vector.size());
+    calc2(vector);
+    std::cout<<BOLDWHITE<<"Route is: ";
+    for (std::vector<int> a:path2){
+        for (int i:a)
+            std::cout<<BOLDGREEN<<i<<" ";
+    }
+    std::cout<<std::endl;
+    std::cout <<BOLDWHITE<< "Total cost = "<<BOLDGREEN <<totalMin<< std::endl;
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     std::cout<<"Execution time:"<<duration.count()<<"ms"<<std::endl;
@@ -204,12 +244,12 @@ void readFile(std::string filePath, int choice){
 
 int main(int argc, char *argv[] ) {
     int choice;
-    std::string file="/Users/root1/CLionProjects/TSP/graph.txt";
+    std::string file="/Users/root1/CLionProjects/TSP/graph3.txt";
     bool validChoice=false;
     std::cout<<BOLDGREEN<<"Please select an algorithm:"<<std::endl;
     std::cout<<BOLDYELLOW<<"1)Algorithm No1(Naive Solution)"<<std::endl;
     std::cout<<"2)Algorithm No2(Dynamic Programming)"<<std::endl;
-    std::cout<<"3)Algorithm No3"<<RESET<<std::endl;
+    std::cout<<"3)Algorithm No3(Backtracking)"<<RESET<<std::endl;
     std::cout<<">";
     std::cin>>choice;
     std::cout << std::endl;
@@ -221,7 +261,7 @@ int main(int argc, char *argv[] ) {
         std::cout<<BOLDRED<<"Please enter valid num"<<RESET<<std::endl;
         std::cout<<BOLDYELLOW<<"1)Algorithm No1(Naive Solution)"<<std::endl;
         std::cout<<"2)Algorithm No2(Dynamic Programming)"<<std::endl;
-        std::cout<<"3)Algorithm No3"<<RESET<<std::endl;
+        std::cout<<"3)Algorithm No3(Backtracking)"<<RESET<<std::endl;
         std::cout<<">";
         std::cin>>choice;
     }}while(!validChoice);
