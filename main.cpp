@@ -358,8 +358,8 @@ void readFile(std::string filePath, int choice){
         myfile.close();
     }
     else {
-        std::cout <<"Unable to open file."<<std::endl;
-        std::cout<<"Give me the right path.."<<std::endl;
+        std::cout<<BOLDRED <<"Unable to open file."<<std::endl;
+        std::cout<<"Give me the right path.."<<RESET<<std::endl;
         std::cout<<">";
         std::string cpath;
         std::cin>>cpath;
