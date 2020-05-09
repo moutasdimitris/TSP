@@ -157,9 +157,7 @@ void calc2first(std::vector<std::vector<int> > vector){
 
 void findMin3(std::vector<std::vector<int> > vector,std::vector<int> p){
     int sum=0;
-    int pos=0;
     for (int i=0;i<p.size()-1;i++){
-        pos=i;
         int first=p[i];
         int second=p[i+1];
         sum+=vector[first-1][second-1];
